@@ -10,7 +10,6 @@ class Solution {
                 sb.append(a[j%len]);
                 cnt--;
             }
-            System.out.println(sb.toString());
             if(sb.toString().equals(B)) return i;
         }
         
