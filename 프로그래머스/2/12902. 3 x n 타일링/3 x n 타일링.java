@@ -5,7 +5,7 @@ class Solution {
         arr[2] = 3;
         arr[4] = 11;
         for (int i = 6 ; i <= n ;i +=2){
-            arr[i] = ((arr[i-2] * 4) % 1000000007 - arr[i-4] + 1000000007) % 1000000007; 
+            arr[i] = ((arr[i-2] * 4) - arr[i-4] + 1000000007) % 1000000007; 
         }
         return (int)arr[n];
     }
