@@ -10,18 +10,18 @@ class Solution {
         
         for (int i = 0 ; i < count ; i++){
             visited[i] = true;
-            bfs(computers[i], computers);
+            dfs(computers[i], computers);
         }
         
         return answer;
     }
     
-    public void bfs(int[] arr, int[][]computers){
+    public void dfs(int[] arr, int[][]computers){
         for (int i = 0 ; i < count ; i++){
             if (visited[i] == false && arr[i] == 1){
                 visited[i] = true;
                 answer--;
-                bfs(computers[i], computers);
+                dfs(computers[i], computers);
             }
         } 
     }
