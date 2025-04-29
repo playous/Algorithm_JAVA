@@ -2,7 +2,6 @@ import java.util.*;
 
 public class Solution {
     public int[] solution(int[] arr) {
-        LinkedList<Integer> list = new LinkedList<>();
         Deque<Integer> queue = new ArrayDeque<>();
         
         for (int i : arr){
@@ -11,14 +10,10 @@ public class Solution {
             }
         }
         
-        for (int i : queue){
-            list.add(i);
-        }
-        
-        int[] answer = new int[list.size()];
+        int[] answer = new int[queue.size()];
         
         int index = 0;
-        for (int i : list){
+        for (int i : queue){
             answer[index++] = i;
         }
         return answer;
