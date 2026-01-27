@@ -2,55 +2,53 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static class Floor{
-        int floor;
-        int level;
-        public Floor(int floor, int level) {
-            this.floor = floor;
-            this.level = level;
+    public static class Node{
+        int x;
+        int time;
+        public Node(int x, int time){
+            this.x = x;
+            this.time = time;
         }
     }
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringTokenizer st;
-        st = new StringTokenizer(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
         int f = Integer.parseInt(st.nextToken());
         int s = Integer.parseInt(st.nextToken());
         int g = Integer.parseInt(st.nextToken());
         int u = Integer.parseInt(st.nextToken());
         int d = Integer.parseInt(st.nextToken());
 
-        boolean[] visited = new boolean[f + 1];
-        Queue<Floor> q = new ArrayDeque<>();
-        q.add(new Floor(s, 0));
-        visited[s] = true;
+        int[] count = new int[1000001];
+        Arrays.fill(count, Integer.MAX_VALUE);
+
+        Queue<Node> q = new ArrayDeque<Node>();
+        q.add(new Node(s, 0));
+
         int answer = -1;
-        if (s != g){
-            while(!q.isEmpty()) {
-                Floor cur = q.poll();
-                int level = cur.level;
-                int floor = cur.floor;
-                if (floor == g){
-                    answer = level;
+
+        while(!q.isEmpty()){
+            Node cur = q.poll();
+            if(cur.x == g) {
+                answer = cur.time;
+                break;
+            }
+
+            if (cur.x + u <= f){
+                if(count[cur.x + u] > cur.time + 1) {
+                    count[cur.x + u] = cur.time + 1;
+                    q.add(new Node(cur.x + u , cur.time + 1));
                 }
-                if(floor + u <= f) {
-                    if (!visited[floor + u]) {
-                        q.add(new Floor(floor + u, level + 1));
-                        visited[floor + u] = true;
-                    }
-                }
-                if(floor - d >= 1) {
-                    if (!visited[floor - d]) {
-                        q.add(new Floor(floor - d, level + 1));
-                        visited[floor - d] = true;
-                    }
+            }
+            if (cur.x - d >= 1) {
+                if (count[cur.x - d] > cur.time + 1) {
+                    count[cur.x - d] = cur.time + 1;
+                    q.add(new Node(cur.x - d, cur.time + 1));
                 }
             }
         }
-        if (s == g) answer = 0;
-
-        bw.write(String.valueOf(answer == -1 ? "use the stairs" : answer));
-        bw.flush();
+        if (answer == -1) System.out.println("use the stairs");
+        else System.out.println(answer);
     }
 }
