@@ -1,75 +1,58 @@
-import java.io.*;
 import java.util.*;
+import java.io.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringTokenizer st;
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static StringTokenizer st;
+	static int[] switches;
 
-        int n = Integer.parseInt(br.readLine());
-        int[] switches = new int[n + 1];
+	public static void main(String[] args) throws Exception {
+		int n = Integer.parseInt(br.readLine());
+		switches = new int[n + 1];
 
-        st = new StringTokenizer(br.readLine());
-        for (int i = 1; i <= n; i++) {
-            switches[i] = Integer.parseInt(st.nextToken());
-        }
+		st = new StringTokenizer(br.readLine());
+		for (int i = 1; i < n + 1; i++) {
+			switches[i] = Integer.parseInt(st.nextToken());
+		}
 
-        int m = Integer.parseInt(br.readLine());
-        for (int i = 0; i < m; i++) {
-            st = new StringTokenizer(br.readLine());
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
-            // 남학생 (배수)
-            if (x == 1){
-                man(switches, y);
-            }
-            // 여학생 (좌우 대칭)
-            if (x == 2) {
-                girl(switches, y);
-            }
-        }
+		int stuCount = Integer.parseInt(br.readLine());
 
-        for (int i = 0; i <= n / 20; i++) {
-            int s = 20 * i;
-            for (int j = s + 1; j <= s + 20; j++) {
-                if (j <= n) {
-                    bw.write(switches[j] + " ");
-                }
-            }
-            bw.write("\n");
-        }
+		for (int i = 0; i < stuCount; i++) {
+			st = new StringTokenizer(br.readLine());
+			int gender = Integer.parseInt(st.nextToken());
+			int value = Integer.parseInt(st.nextToken());
 
-        bw.flush();
-    }
+			if (gender == 1) {
+				// 남자
+				for (int j = value; j < n + 1; j += value) {
+					switches[j] = switches[j] == 0 ? 1 : 0;
+				}
+			} else if (gender == 2) {
+				// 여자
+				switches[value] = switches[value] == 0 ? 1 : 0;
 
-    static void man(int[] switches, int y) {
-        for (int i = y; i < switches.length; i += y) {
-            switches[i] = switches[i] == 1 ? 0 : 1;
-        }
-    }
+				for (int j = 1; j < n + 1; j++) {
+					if (value + j <= n && value - j > 0) {
+						if (switches[value + j] == switches[value - j]) {
+							switches[value + j] = switches[value + j] == 0 ? 1 : 0;
+							switches[value - j] = switches[value + j];
+							
+						}else {
+							break;
+						}
+					} 
+				}
+			}
+		}
+		StringBuilder sb =new StringBuilder();
 
-    static void girl(int[] switches, int y) {
-        int s = y;
-        int e = y;
-        while(true){
-            if(s < 1 || e >= switches.length){
-                s += 1;
-                e -= 1;
-                break;
-            }
-            if(switches[s] == switches[e]){
-                s--;
-                e++;
-            }
-            else {
-                s += 1;
-                e -= 1;
-                break;
-            }
-        }
-        for (int i = s; i <= e; i++) {
-            switches[i] = switches[i] == 1 ? 0 : 1;
-        }
-    }
+		for(int i = 1 ; i < n + 1 ; i++) {
+			sb.append(switches[i]);
+			if(i % 20 == 0)
+				sb.append("\n");
+			else
+				sb.append(" ");
+		}
+		System.out.println(sb);
+	}
 }
