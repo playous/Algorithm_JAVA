@@ -7,15 +7,6 @@ class Solution{
     static int[] point;
     static boolean[] visited;
     
-    static class Node {
-        int name;
-        int dir;
-        public Node(int name, int dir){
-            this.name = name;
-            this.dir = dir;
-        }
-    }
-    
 	public static void main(String args[]) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
@@ -64,20 +55,19 @@ class Solution{
 
     
     public static void calc(int name, int dir){
-        Queue<Node> q = new ArrayDeque<>();
-        q.add(new Node(name, dir));
+        Queue<Integer> q = new ArrayDeque<>();
+        q.add(name);
         visited[name] = true;
         int[] change = new int[5];
         change[name] = dir;
         
         while (!q.isEmpty()){
-            Node cur = q.poll();
-            int cName = cur.name;
-            int cDir = cur.dir;
+            int cName = q.poll();
+            int cDir = change[cName];
             int cPoint = point[cName];
             if (canLeft(cName, cPoint) && canRight(cName, cPoint)){
-                q.add(new Node(cName - 1, cDir * -1));
-                q.add(new Node(cName + 1, cDir * -1));
+                q.add(cName - 1);
+                q.add(cName + 1);
                 
                 change[cName - 1] = cDir * -1;
                 change[cName + 1] = cDir * -1;
@@ -86,14 +76,14 @@ class Solution{
                 visited[cName + 1] = true;
             }
             else if (canLeft(cName, cPoint)){
-                q.add(new Node(cName - 1, cDir * -1));
+            	q.add(cName - 1);
                 
                 change[cName - 1] = cDir * -1;
                 
                 visited[cName - 1] = true;
             }
             else if (canRight(cName, cPoint)){
-                q.add(new Node(cName + 1, cDir * -1));
+            	q.add(cName + 1);
                 
                 change[cName + 1] = cDir * -1;
                 
