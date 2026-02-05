@@ -65,24 +65,15 @@ class Solution{
             int cName = q.poll();
             int cDir = change[cName];
             int cPoint = point[cName];
-            if (canLeft(cName, cPoint) && canRight(cName, cPoint)){
-                q.add(cName - 1);
-                q.add(cName + 1);
-                
-                change[cName - 1] = cDir * -1;
-                change[cName + 1] = cDir * -1;
-                
-                visited[cName - 1] = true;
-                visited[cName + 1] = true;
-            }
-            else if (canLeft(cName, cPoint)){
+           
+            if (canLeft(cName, cPoint)){
             	q.add(cName - 1);
                 
                 change[cName - 1] = cDir * -1;
                 
                 visited[cName - 1] = true;
             }
-            else if (canRight(cName, cPoint)){
+            if (canRight(cName, cPoint)){
             	q.add(cName + 1);
                 
                 change[cName + 1] = cDir * -1;
