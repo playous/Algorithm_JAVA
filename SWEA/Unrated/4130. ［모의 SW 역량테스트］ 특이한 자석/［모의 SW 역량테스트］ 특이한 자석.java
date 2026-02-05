@@ -1,119 +1,100 @@
 import java.util.*;
 import java.io.*;
 
-class Solution{
-    static int[][] arr;
-    
-    static int[] point;
-    static boolean[] visited;
-    
-	public static void main(String args[]) throws Exception{
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-        StringTokenizer st;
-        
-        int T = Integer.parseInt(br.readLine());
-        
-        for (int t = 1; t <= T ; t++){
-            int k = Integer.parseInt(br.readLine());
-            
-            arr = new int[5][80];
-            point = new int[]{0, 40, 40, 40, 40};
-            for (int i = 1 ; i <= 4 ; i ++){
-                st = new StringTokenizer(br.readLine());
-                int[] arr1 = new int[8];
-                for (int j = 0 ; j < 8 ; j ++){
-                    arr1[j] = Integer.parseInt(st.nextToken());
-                }
-                for (int j = 0 ; j < 80 ; j++) {
-                	arr[i][j] = arr1[j % 8];
-                }
-            }
-            
-            for (int i = 0 ; i < k ; i ++){
-                st = new StringTokenizer(br.readLine());
-                int name = Integer.parseInt(st.nextToken());
-                int dir = Integer.parseInt(st.nextToken());
-                visited = new boolean[5];
-                visited[0] = true;
-                
-                calc(name,dir);
-            }
-            int answer = 0;
-            int[] score = {0, 1, 2, 4 ,8};
-            for (int i = 1; i <= 4; i ++){
-                int p = point[i];
-                if(arr[i][p] == 1){
-                    answer += score[i];
-                }
-            }
-            
-            sb.append("#").append(t).append(" ").append(answer).append("\n");
-        }
-        System.out.println(sb.toString());
+public class Solution {
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+	static StringTokenizer st;
+
+	static StringBuilder sb = new StringBuilder();
+	static int k;
+	static int[][] magnet;
+
+	public static void main(String[] args) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		int T = Integer.parseInt(br.readLine());
+
+		for (int t = 1; t < T + 1; t++) {
+			sb.append("#").append(t).append(" ");
+			k = Integer.parseInt(br.readLine());
+			magnet = new int[4][8];
+
+			for (int i = 0; i < 4; i++) {
+				st = new StringTokenizer(br.readLine());
+
+				for (int j = 0; j < 8; j++) {
+					magnet[i][j] = Integer.parseInt(st.nextToken());
+				}
+			}
+			for (int i = 0; i < k; i++) {
+				st = new StringTokenizer(br.readLine());
+				int op = Integer.parseInt(st.nextToken()) - 1; // 1부터 입력받아서 그냥 -1처리.
+				int val = Integer.parseInt(st.nextToken());
+
+				int[] rotate = new int[4];
+
+				rotate[op] = val;
+				int nextDir = -val;
+				int curBlade = magnet[op][2];
+				for (int j = 1; j < 4; j++) {
+					int next = op + j;
+					if (next < 4) {
+						int nextBlade = magnet[next][6];
+						if (curBlade != nextBlade) {
+							rotate[next] = nextDir;
+							nextDir = -nextDir;
+						} else
+							break;
+						curBlade = magnet[next][2];
+					}
+				}
+
+				nextDir = -val;
+				curBlade = magnet[op][6];
+				for (int j = 1; j < 4; j++) {
+					int next = op - j;
+					if (next >= 0) {
+						int nextBlade = magnet[next][2];
+						if (curBlade != nextBlade) {
+							rotate[next] = nextDir;
+							nextDir = -nextDir;
+						} else
+							break;
+						curBlade = magnet[next][6];
+					}
+				}
+				for (int j = 0; j < 4; j++) {
+					if (rotate[j] == 0)
+						continue;
+					rotate(magnet[j], rotate[j]);
+				}
+			}
+			sb.append(magnet[0][0] + magnet[1][0] * 2 + magnet[2][0] * 4 + magnet[3][0] * 8);
+			sb.append("\n");
+		}
+
+		bw.write(sb.toString());
+		bw.flush();
+		bw.close();
+
 	}
 
-    
-    public static void calc(int name, int dir){
-        Queue<Integer> q = new ArrayDeque<>();
-        q.add(name);
-        visited[name] = true;
-        int[] change = new int[5];
-        change[name] = dir;
-        
-        while (!q.isEmpty()){
-            int cName = q.poll();
-            int cDir = change[cName];
-            int cPoint = point[cName];
-           
-            if (canLeft(cName, cPoint)){
-            	q.add(cName - 1);
-                
-                change[cName - 1] = cDir * -1;
-                
-                visited[cName - 1] = true;
-            }
-            if (canRight(cName, cPoint)){
-            	q.add(cName + 1);
-                
-                change[cName + 1] = cDir * -1;
-                
-                visited[cName + 1] = true;
-            }
-        }
-        
-        for (int i = 1; i <= 4 ; i++) {
-        	move(i, change[i]);
-        }
-    }
-        
-    public static boolean canLeft(int cName, int cPoint){
-        int nName = cName - 1;
-        if(nName >= 1 && !visited[nName]) {
-        	int nPoint = point[nName];
-        	if (arr[cName][cPoint - 2] != arr[nName][nPoint + 2]){
-        		return true;
-        	}
-        }
-        return false;
-    }
-    public static boolean canRight(int cName, int cPoint){
-        int nName = cName + 1;
-        if(nName <= 4 && !visited[nName]) {
-        	int nPoint = point[nName];
-        	if (arr[cName][cPoint + 2] != arr[nName][nPoint - 2]){
-        		return true;
-        	}
-        }
-        return false;
-    }
-    
-    public static void move(int name, int dir){
-        if (dir == -1){
-            point[name]++;
-        }
-        if (dir == 1){
-            point[name]--;
-        }
-    }
+	static void rotate(int[] mag, int direction) {
+		if (direction == 1) { // 시계
+			int temp = mag[mag.length - 1];
+
+			for (int i = mag.length - 1; i > 0; i--) {
+				mag[i] = mag[i - 1];
+			}
+			mag[0] = temp;
+
+		} else { // 반시계
+			int temp = mag[0];
+
+			for (int i = 1; i < mag.length; i++) {
+				mag[i - 1] = mag[i];
+			}
+			mag[mag.length - 1] = temp;
+		}
+	}
 }
