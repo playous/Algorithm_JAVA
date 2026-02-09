@@ -2,74 +2,95 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static class City{
+
+    static class Node{
         int name;
         int cost;
-        public City(int name, int cost) {
+        Node(int name, int cost){
             this.name = name;
             this.cost = cost;
         }
     }
 
-    static int n,m,x;
-    static List<City>[] list;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st;
+
         st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        int x = Integer.parseInt(st.nextToken());
 
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
-        x = Integer.parseInt(st.nextToken());
-
-        list = new List[n + 1];
+        List<Node>[] list = new List[n + 1];
+        List<Node>[] reverseList = new List[n + 1];
 
         for (int i = 1; i <= n; i++) {
             list[i] = new ArrayList<>();
+            reverseList[i] = new ArrayList<>();
         }
-        for (int i = 0; i < m; i++) {
+
+        for (int i = 0; i < m ; i++){
             st = new StringTokenizer(br.readLine());
-            int s = Integer.parseInt(st.nextToken());
-            int e = Integer.parseInt(st.nextToken());
-            int t = Integer.parseInt(st.nextToken());
-            list[s].add(new City(e, t));
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+            list[a].add(new Node(b, c));
+            reverseList[b].add(new Node(a, c));
         }
 
-        int max = 0;
+        int[] dist = new int[n + 1];
+        int[] reverseDist = new int[n + 1];
+
         for (int i = 1; i <= n; i++) {
-            if (i == x) continue;
-            int go = dijkstra(i, x);
-            int back = dijkstra(x, i);
-            max = Math.max(max, go + back);
+            dist[i] = 100000000;
+            reverseDist[i] = 100000000;
         }
 
-        bw.write(String.valueOf(max));
-        bw.flush();
-    }
+        dist[x] = 0;
+        PriorityQueue<Node> pq = new PriorityQueue<>((a,b) -> a.cost - b.cost);
+        pq.add(new Node(x, 0));
 
-    static int dijkstra(int start, int end) {
-        int[] minCost = new int[n + 1];
-        Arrays.fill(minCost, Integer.MAX_VALUE);
+        while (!pq.isEmpty()){
+            Node cur = pq.poll();
 
-        PriorityQueue<City> pq = new PriorityQueue<>((a, b) -> a.cost - b.cost);
+            int name = cur.name;
+            int cost = cur.cost;
 
-        pq.add(new City(start, 0));
-        while (!pq.isEmpty()) {
-            City c = pq.poll();
-            int cost = c.cost;
-            int cur = c.name;
-            if (cost > minCost[cur]) {
-                continue;
-            }
-            for (City city : list[cur]) {
-                if (city.cost + cost < minCost[city.name]) {
-                    pq.add(new City(city.name, cost + city.cost));
-                    minCost[city.name] = city.cost + cost;
+            if(cost > dist[name]) continue;
+
+            for (Node next : list[name]){
+                if (cost + next.cost < dist[next.name]){
+                    dist[next.name] = cost + next.cost;
+                    pq.add(new Node(next.name, dist[next.name]));
                 }
             }
         }
-        return minCost[end];
+
+        pq = new PriorityQueue<>((a,b) -> a.cost - b.cost);
+        pq.add(new Node(x, 0));
+        reverseDist[x] = 0;
+
+        while (!pq.isEmpty()){
+            Node cur = pq.poll();
+
+            int name = cur.name;
+            int cost = cur.cost;
+
+            if(cost > reverseDist[name]) continue;
+
+            for (Node next : reverseList[name]){
+                if (cost + next.cost < reverseDist[next.name]){
+                    reverseDist[next.name] = cost + next.cost;
+                    pq.add(new Node(next.name, reverseDist[next.name]));
+                }
+            }
+        }
+
+        int answer = 0;
+        for (int i = 1; i <= n ; i ++){
+            answer = Math.max(dist[i] + reverseDist[i], answer);
+        }
+
+        System.out.println(answer);
     }
 }
-
