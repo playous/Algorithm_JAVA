@@ -2,44 +2,53 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static class Meeting{
+
+    static class Node{
         int start;
         int end;
-        public Meeting(int start, int end){
+        Node(int start, int end){
             this.start = start;
             this.end = end;
         }
     }
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st;
 
         int n = Integer.parseInt(br.readLine());
 
-        List<Meeting> list = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
+        List<Node> list = new ArrayList<>();
+
+        for (int i = 0; i < n ; i++){
             st = new StringTokenizer(br.readLine());
-            int start = Integer.parseInt(st.nextToken());
-            int end = Integer.parseInt(st.nextToken());
-            list.add(new Meeting(start, end));
+            int s = Integer.parseInt(st.nextToken());
+            int e = Integer.parseInt(st.nextToken());
+            list.add(new Node(s, e));
         }
 
         list.sort((a, b) -> {
-            if (a.end == b. end) return a.start - b.start;
+            if (a.end == b.end) return a.start - b.start;
             return a.end - b.end;
         });
 
-        int count = 0;
-        int lastend = 0;
-        for (Meeting m : list) {
-            if (m.start >= lastend) {
-                count++;
-                lastend = m.end;
+        int prev = 0;
+        int answer = 0;
+
+        for (int i = 0; i < n; i ++){
+            Node cur = list.get(i);
+
+            int curStart = cur.start;
+            int curEnd = cur.end;
+
+            if (prev <= curStart){
+                prev = curEnd;
+                answer++;
             }
         }
 
-        bw.write(String.valueOf(count));
-        bw.flush();
+        System.out.print(answer);
+
     }
+
 }
