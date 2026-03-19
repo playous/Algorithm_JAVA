@@ -1,6 +1,6 @@
 # [level 1] [PCCE 기출문제] 10번 / 공원 - 340198 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/340198#) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/340198) 
 
 ### 성능 요약
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2026년 03월 15일 22:39:07
+2026년 03월 19일 10:49:03
 
 ### 문제 설명
 
