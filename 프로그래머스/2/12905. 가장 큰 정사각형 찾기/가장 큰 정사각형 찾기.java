@@ -1,0 +1,21 @@
+class Solution{
+    public int solution(int[][] board){
+        int answer = 0;
+        
+        int r = board.length;
+        int c = board[0].length;
+        int[][] dp = new int[r + 1][c + 1];
+        
+        for (int i = 1; i <= r ; i ++){
+            for (int j = 1; j <= c ; j ++){
+                if(board[i - 1][j - 1] == 0) continue;
+                
+                dp[i][j] = Math.min(dp[i - 1][j - 1], 
+                                    Math.min(dp[i][j - 1], dp[i -1] [j])) + 1;
+                answer = Math.max(dp[i][j], answer);
+            }
+        }
+        
+        return answer * answer;
+    }
+}
