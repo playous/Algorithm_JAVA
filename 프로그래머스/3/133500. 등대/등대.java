@@ -57,7 +57,6 @@ class Solution {
             
         }
 
-
         int answer = Math.min(dp0[1], dp1[1]);
         return answer;
     }
