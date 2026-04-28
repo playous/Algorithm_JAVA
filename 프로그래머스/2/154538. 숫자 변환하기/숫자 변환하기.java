@@ -1,43 +1,46 @@
 import java.util.*;
 
 class Solution {
-    
-    public class data{
-        int sum;
+    class Node {
+        int value;
         int count;
-        public data(int sum, int count){
-            this.sum = sum;
+        Node(int value, int count){
+            this.value = value;
             this.count = count;
         }
     }
-    
     public int solution(int x, int y, int n) {
-        int answer = dfs(x,y,n);
-        return answer;
-    }
-    
-    public int dfs (int x, int y, int n){
-        Queue<data> q = new LinkedList<>();
-        Set<Integer> visited = new HashSet<>();
+        int answer = -1;
         
-        q.add(new data(x,0));
-        visited.add(x);
+        Queue<Node> q = new ArrayDeque<>();
+        boolean[] visited = new boolean[1000001];
+        
+        q.add(new Node(x, 0));
         
         while(!q.isEmpty()){
-            data d = q.poll();
-            if (d.sum == y) return d.count;
+            Node cur = q.poll();
+            int v = cur.value;
+            int c = cur.count;
+                        
+            if (v == y) {
+                answer = c;
+                break;
+            }
             
-            int[] nextValues = {d.sum + n, d.sum * 2, d.sum * 3};
-            
-            for (int next : nextValues) {
-                if (next > y || visited.contains(next)) {
-                    continue;
-                }
-                
-                q.add(new data(next, d.count + 1));
-                visited.add(next);
+            if (v + n <= y && !visited[v + n]) {
+                q.add (new Node(v + n, c + 1));
+                visited[v + n] = true;
+            }
+            if (v * 2 <= y && !visited[v * 2]) {
+                q.add (new Node(v * 2, c + 1));
+                visited[v * 2] = true;
+            }
+            if (v * 3 <= y && !visited[v * 3]) {
+                q.add (new Node(v * 3, c + 1));
+                visited[v * 3] = true;
             }
         }
-        return -1;
+        
+        return answer;
     }
 }
