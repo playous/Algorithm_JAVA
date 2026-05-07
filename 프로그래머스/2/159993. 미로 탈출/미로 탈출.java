@@ -2,80 +2,105 @@ import java.util.*;
 import java.io.*;
 
 class Solution {
-    static int[] dr = {-1, 1, 0, 0};
-    static int[] dc = {0, 0, -1, 1};
-    static char[][] map;
-    static boolean[][] visited;
-    static int R, C;
-    static class Node {
+    
+    int[] dr = {-1, 1, 0, 0};
+    int[] dc = {0, 0, -1, 1};
+    
+    int R, C;
+    
+    char[][] map;
+    boolean[][] visited;
+    
+    int answer;
+    
+    class Node{
         int r;
         int c;
-        int level;
-        Node(int r, int c, int level){
+        int time;
+        Node(int r, int c, int time){
             this.r = r;
             this.c = c;
-            this.level = level;
+            this.time = time;
         }
     }
+    
     public int solution(String[] maps) {
         R = maps.length;
         C = maps[0].length();
+                
+        answer = -1;
         map = new char[R][C];
-        visited = new boolean[R][C];
         
-        int RR = 0, RC = 0, SR = 0, SC = 0, ER = 0, EC = 0;
-        for (int i = 0; i < R ; i ++){
-            for (int j = 0; j < C ; j++){
-                map[i][j] = maps[i].charAt(j);
-                if (map[i][j] == 'L'){
-                    RR = i;
-                    RC = j;
+        for (int i = 0 ; i < R ; i ++){
+            map[i] = maps[i].toCharArray();
+        }
+        
+        int sr = 0;
+        int sc = 0;
+        int lr = 0;
+        int lc = 0;
+        int er = 0;
+        int ec = 0;
+        
+        for (int i = 0 ; i < R ; i ++){
+            for (int j = 0 ; j < C ; j ++){
+                if(map[i][j] == 'S'){
+                    sr = i;
+                    sc = j;
                 }
-                if (map[i][j] == 'S'){
-                    SR = i;
-                    SC = j;
+                if(map[i][j] == 'L'){
+                    lr = i;
+                    lc = j;
                 }
-                if (map[i][j] == 'E'){
-                    ER = i;
-                    EC = j;
+                if(map[i][j] == 'E'){
+                    er = i;
+                    ec = j;
                 }
+                
             }
         }
-        int answer = 0;
-        int cnt1 = dfs(SR, SC, RR, RC);
-        visited = new boolean[R][C];
-        int cnt2 = dfs(RR, RC, ER, EC);
-        if (cnt1 == 0 || cnt2 == 0) answer = -1;
-        else answer = cnt1 + cnt2;
         
+        int time1 = dfs(sr, sc, lr, lc, 'L');
+        int time2 = dfs(lr, lc, er, ec, 'E');
+                
+        int answer = time1 + time2;
+        if (time1 == 0 || time2 == 0) answer = -1;
         return answer;
     }
     
-    static int dfs(int sr, int sc, int gr, int gc){
+    public int dfs(int startR, int startC, int goalR, int goalC, char goal){
+        visited = new boolean[R][C];
         Queue<Node> q = new ArrayDeque<>();
-        q.add(new Node(sr,sc,0));
-        visited[sr][sc] = true;
-        int cnt = 0;
-        while (!q.isEmpty()){
+        
+        q.add(new Node(startR, startC, 0));
+        visited[startR][startC] = true;
+        
+        int answerTime = 0;
+        
+        while(!q.isEmpty()){
             Node cur = q.poll();
-            int r = cur.r;
-            int c = cur.c;
-            int level = cur.level;
-            if (r == gr && c == gc){
-                cnt = level;
+            int cr = cur.r;
+            int cc = cur.c;
+            int ct = cur.time;
+            
+            if (cr == goalR && cc == goalC){
+                answerTime = ct;
                 break;
             }
-            for (int i = 0 ; i < 4 ; i ++){
-                int nr = r + dr[i];
-                int nc = c + dc[i];
-                if (nr >= 0 && nc >= 0 && nr < R && nc < C){
-                    if (!visited[nr][nc] && map[nr][nc] != 'X'){
-                        q.add(new Node(nr, nc , level + 1));
+            
+            for (int i = 0 ; i < 4; i ++){
+                int nr = cr + dr[i];
+                int nc = cc + dc[i];
+
+                if(nr >= 0 && nr < R && nc >= 0 && nc < C){
+                    if (!visited[nr][nc] && (map[nr][nc] != 'X' || map[nr][nc] == goal)){
                         visited[nr][nc] = true;
+                        q.add(new Node(nr, nc, ct + 1));
                     }
                 }
             }
         }
-        return cnt;
+        return answerTime;
+        
     }
 }
