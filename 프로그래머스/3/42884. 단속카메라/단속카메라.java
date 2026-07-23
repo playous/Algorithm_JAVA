@@ -2,38 +2,37 @@ import java.util.*;
 import java.io.*;
 
 class Solution {
-    static class Node {
+    class Node {
         int start;
         int end;
-        Node(int start, int end){
+        Node (int start, int end){
             this.start = start;
             this.end = end;
         }
     }
     public int solution(int[][] routes) {
         int answer = 0;
+
+        int n = routes.length;
+        
         List<Node> list = new ArrayList<>();
-        int len = routes.length;
-        for (int i = 0; i < len; i ++){
-            list.add(new Node(routes[i][0], routes[i][1]));
+        
+        for (int i = 0 ; i < n ; i ++){
+            int s = routes[i][0];
+            int e = routes[i][1];
+            list.add(new Node(s, e));
         }
         
-        list.sort((a,b) -> a.start - b.start);
+        Collections.sort(list, (a, b) -> a.end - b.end);
         
-        int idx = 0;
+        int last = -30001;
         
-        while (idx < len){
-            Node cur = list.get(idx);
-            int start = cur.start;
-            int end = cur.end;
-            idx += 1;
-             
-            while (idx < len && list.get(idx).start <= end){
-                end = Math.min(end, list.get(idx).end);
-                idx++;
-            }
-            answer += 1;
+        for (Node node : list){
+            if (node.start <= last) continue;
+            last = node.end;
+            answer++;
         }
+        
         return answer;
     }
 }
