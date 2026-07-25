@@ -1,54 +1,57 @@
 import java.util.*;
 
 class Solution {
-    static class Node{
-        int num;
-        int cost;
-        Node(int num, int cost){
-            this.num = num;
-            this.cost = cost;
+    class Node{
+        int next;
+        int weight;
+        Node(int next, int weight){
+            this.next = next;
+            this.weight = weight;
         }
     }
     public int solution(int N, int[][] road, int K) {
-        int answer = 1;
-        int[][] map = new int[N + 1][N + 1];
-        boolean[] visited = new boolean[N + 1];
+        int answer = 0;
+        List<Node>[] list = new List[N + 1];
         
-        for (int i = 0 ; i < N + 1 ; i ++){
-            for (int j = 0 ; j < N + 1 ; j++){
-                map[i][j] = 1000000;
-            }
+        for (int i = 1; i <= N ; i++){
+            list[i] = new ArrayList<>();
         }
         
-        for (int i = 0 ; i < road.length; i ++){
-            int s1 = road[i][0];
-            int s2 = road[i][1];
-            int cost = road[i][2];
-            map[s1][s2] = Math.min(map[s1][s2], cost);
-            map[s2][s1] = Math.min(map[s2][s1], cost);
+        for (int i = 0; i < road.length; i ++){
+            int a = road[i][0];
+            int b = road[i][1];
+            int c = road[i][2];
+            
+            list[a].add(new Node(b, c));
+            list[b].add(new Node(a, c));
         }
-      
-        PriorityQueue<Node> pq = new PriorityQueue<>((a,b) -> a.cost - b.cost);
         
-        for(int i = 2 ; i < N + 1 ; i ++){
-            if(map[1][i] <= K){
-                pq.add(new Node(i, map[1][i]));
-            }
-        }
+        int[] dist = new int[N + 1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        
+        dist[1] = 0;
+        
+        PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> a.weight - b.weight);
+        
+        pq.add(new Node(1, 0));
         
         while(!pq.isEmpty()){
             Node cur = pq.poll();
-            if (visited[cur.num]) continue;
-            if(cur.cost > K) break;
-            else {
-                visited[cur.num] = true;
-                answer++;
-            }
-            for (int i = 2; i < N + 1 ; i++){
-                if(!visited[i] && map[cur.num][i] + cur.cost <= K){
-                    pq.add(new Node(i, map[cur.num][i] + cur.cost));
+            int id = cur.next;
+            int w = cur.weight;
+            
+            if (dist[id] < w) continue;
+            
+            for (Node next : list[id]){
+                if (dist[next.next] > next.weight + w){
+                    dist[next.next] = next.weight + w;
+                    pq.add(new Node(next.next, dist[next.next]));
                 }
             }
+        }
+        
+        for (int i = 1; i <= N ; i ++){
+            if(dist[i] <= K) answer++;
         }
         return answer;
     }
