@@ -1,79 +1,76 @@
 import java.util.*;
 
 class Solution {
+    class Node {
+        int id;
+        int type;
+        Node (int id, int type){
+            this.id = id;
+            this.type = type;
+        }
+    }
     
-    List<Integer>[][] list;
-    int n;
+    List<Node>[] graph;
     int answer = 0;
+    int n;
     
     public int solution(int n, int infection, int[][] edges, int k) {
-        
         this.n = n;
-        list = new List[n + 1][4];
         
-        for (int i = 1; i <= n; i++){
-            for (int j = 1; j <= 3; j ++){
-                list[i][j] = new ArrayList<>();
-            }
+        graph = new List[n + 1];
+        
+        for (int i = 1 ; i <= n ; i++){
+            graph[i] = new ArrayList<>();
         }
         
-        for (int i = 0 ; i < edges.length ; i ++){
+        for (int i = 0; i < edges.length; i ++){
             int a = edges[i][0];
             int b = edges[i][1];
             int type = edges[i][2];
-            
-            list[a][type].add(b);
-            list[b][type].add(a);
-
+            graph[a].add(new Node(b, type));
+            graph[b].add(new Node(a, type));
         }
         
-        List<Integer> infec = new ArrayList<>();
-        infec.add(infection);
+        HashSet<Integer> set = new HashSet<>();
+        set.add(infection);
         
-        calc(k, -1, infec);
+        for (int i = 1; i <= 3; i ++){
+            dfs(i, k, set);    
+        }
         
         return answer;
     }
     
-    public void calc(int cnt, int before, List<Integer> infec){
-        
-        if (cnt == 0){
-            answer = Math.max(infec.size(), answer);
-            return;
+    public void dfs(int type, int count, HashSet<Integer> set){
+        if (count == 0){
+            answer = Math.max(set.size(), answer);
+            return;    
         }
         
-        for (int i = 1; i <= 3; i ++){
-            if (i == before) continue;
+        Queue<Integer> q = new ArrayDeque<>();
+        HashSet<Integer> nextSet = new HashSet<>(set);
             
-            Queue<Integer> q = new ArrayDeque<>();
+        boolean[] visited = new boolean[n + 1];
+        for (int num : set){
+            q.add(num);
+            visited[num] = true;
+        }
+        
+        while(!q.isEmpty()){
+            int cur = q.poll();
             
-            boolean[] visited = new boolean[n + 1];
-            List<Integer> plus = new ArrayList<>();
-            
-            for (int inf : infec){
-                q.add(inf);
-                visited[inf] = true;
-            }
-            
-            
-            while(!q.isEmpty()){
-                int cur = q.poll();
-                for (int next : list[cur][i]){
-                    if (!visited[next]){
-                        visited[next] = true;
-                        plus.add(next);
-                        infec.add(next);
-                        q.add(next);
-                    }
+            for (Node next : graph[cur]){
+                if (!visited[next.id] && next.type == type){
+                    nextSet.add(next.id);
+                    visited[next.id] = true;
+                    q.add(next.id);
                 }
             }
-            
-            calc(cnt - 1, i, infec);
-            
-            for (int remove : plus){
-                infec.remove((Object) remove);
-            }
-            
+        }
+        
+        for (int i = 1; i <= 3 ; i ++){
+            if (i == type) continue;
+            dfs(i, count - 1, nextSet);
         }
     }
 }
