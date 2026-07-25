@@ -17,22 +17,22 @@ class Solution {
             }
         }
         
-        long maxSum = arr1[0];
-        long cur = arr1[0];
+        long maxSum1 = arr1[0];
+        long answer1 = arr1[0];
         
-        for (int i = 1; i < n; i++) {
-            cur = Math.max(arr1[i], cur + arr1[i]);
-            maxSum = Math.max(maxSum, cur);
+        for (int i = 1; i < n ; i ++){
+            maxSum1 = Math.max(maxSum1 + arr1[i], arr1[i]);
+            answer1 = Math.max(answer1, maxSum1);
         }
         
         long maxSum2 = arr2[0];
-        long cur2 = arr2[0];
+        long answer2 = arr2[0];
         
-        for (int i = 1; i < n; i++) {
-            cur2 = Math.max(arr2[i], cur2 + arr2[i]);
-            maxSum2 = Math.max(maxSum2, cur2);
+        for (int i = 1; i < n ; i ++){
+            maxSum2 = Math.max(maxSum2 + arr2[i], arr2[i]);
+            answer2 = Math.max(answer2, maxSum2);
         }
       
-        return Math.max(maxSum, maxSum2);
+        return Math.max(answer1, answer2);
     }
 }
