@@ -3,43 +3,62 @@ import java.util.*;
 
 class Solution {
     public int solution(int[] queue1, int[] queue2) {
-        List<Integer> list1 = new LinkedList<>();
-        List<Integer> list2 = new LinkedList<>();
-
+        int answer = 0;
+        
+        int len1 = queue1.length;
+        int len2 = queue2.length;
+        
         long sum1 = 0;
         long sum2 = 0;
         
-        for (int i = 0; i < queue1.length; i ++){
-            sum1 += queue1[i];
-            list1.add(queue1[i]);
+        for (int n : queue1){
+            sum1 += n;
         }
         
-        for (int i = 0; i < queue2.length; i ++){
-            sum2 += queue2[i];
-            list2.add(queue2[i]);
+        for (int n : queue2){
+            sum2 += n;
         }
         
-        int answer = 0;
+        int len = len1 + len2;
         
+        int[] arr = new int[len];
         
-        while (sum1 != sum2){
-            if (sum1 == 0 || sum2 == 0 || answer > 300000){
-                answer = -1;
+        for (int i = 0; i < len1 ; i++){
+            arr[i] = queue1[i];
+        }
+        for (int i = 0; i < len2 ; i++){
+            arr[i + len1] = queue2[i];
+        }
+        
+        int left = 0;
+        int right = len1;
+        
+        boolean flag = false;
+        
+        while (right < len){
+            if(sum1 == sum2){
+                flag = true;
                 break;
             }
-            if(sum1 < sum2){
-                int k = list2.removeFirst();
-                list1.add(k);
-                sum1 += k;
-                sum2 -= k;
-            }else{
-                int k = list1.removeFirst();
-                list2.add(k);
-                sum2 += k;
-                sum1 -= k;
+            
+            int q1 = arr[left];
+            int q2 = arr[right];
+            
+            if (sum1 < sum2){
+                sum1 += q2;
+                sum2 -= q2;
+                right++;
+            }
+            else if (sum1 > sum2){
+                sum1 -= q1;
+                sum2 += q1;
+                left++;
             }
             answer++;
         }
+        
+        if (!flag) answer = -1;
         return answer;
+        
     }
 }
