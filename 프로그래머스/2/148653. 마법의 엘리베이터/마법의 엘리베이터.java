@@ -1,47 +1,53 @@
 import java.io.*;
 
-class Solution {
+class Solution {  
+    /*
+     2^9 내려가거나 or 올라가거나
+    */
+    int[] arr;
+    int len, answer;
+    
     public int solution(int storey) {
-        int answer = 0;
+        answer = Integer.MAX_VALUE;
+            
+        char[] ch = String.valueOf(storey).toCharArray();
         
-        boolean flag = false;
-        while (true){
-            int next = -1;
-            if (storey == 0) break;
-            if (storey == 10) {
-                answer++;
-                break;
-            }
-            int cur = storey % 10;
-            storey /= 10;
-            if (storey != 0){
-                next = storey % 10;
-            }
-            if (flag){
-                cur += 1;
-                flag = false;
-            }
-            System.out.println(cur);
-            if (cur == 0) continue;
-            if (cur == 10) {
-                flag = true;
-            }
-            if (cur == 5){
-                System.out.println(next);
-                if (next < 5) flag = false;
-                else flag = true;
-                answer += 5;
-            }
-            else if (cur < 5) answer += cur;
-            else if (cur > 5) {
-                answer += (10 - cur);
-                flag = true;
-            }
-            if (flag && storey == 0){
-                storey = 10;
-            }
+        len = ch.length;
+        arr = new int[len];
+        
+        int idx = len - 1;
+        
+        for (char c : ch){
+            arr[idx--] = c - '0';
         }
     
+        calc(arr[0], 1, 0);
+        calc(10 - arr[0], 1, 1);
+        
         return answer;
+    }
+    
+    public void calc (int sum, int cnt, int plus){
+        if (cnt == len){
+            if (plus == 1) sum += 1;
+            answer = Math.min(answer, sum);
+            return;
+        }
+        
+        if(plus == 1){
+            if (arr[cnt] == 9) calc(sum, cnt + 1, 1);
+            else {
+                // 내려가기
+                calc(sum + arr[cnt] + 1, cnt + 1, 0);
+                // 올라가기
+                calc(sum + 10 - (arr[cnt] + 1), cnt + 1, 1);
+            }
+        }
+        else {
+            // 내려가기
+            calc(sum + arr[cnt], cnt + 1, 0);
+            // 올라가기
+            calc(sum + 10 - arr[cnt], cnt + 1, 1);
+        }
     }
 }
