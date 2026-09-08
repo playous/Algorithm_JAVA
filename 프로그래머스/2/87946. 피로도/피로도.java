@@ -1,29 +1,25 @@
 import java.util.*;
 
 class Solution {
-    static int answer = 0;
-    static int len;
+    boolean[] visited;
+    int len;
+    int answer = 0;
     
     public int solution(int k, int[][] dungeons) {
         len = dungeons.length;
-        boolean[] visited = new boolean[len];
-        
-        backTrack(dungeons, visited, k, 0);
-        
+        visited = new boolean[len];
+        calc (k, 0, dungeons);
         return answer;
     }
     
-    static void backTrack(int[][] dungeons, boolean[] visited, int remain, int count){
+    public void calc(int remain, int count, int[][] dungeons){
         answer = Math.max(answer, count);
-        
-        for (int i = 0 ; i < len ; i++){
-            if(!visited[i] && dungeons[i][0] <= remain){
-                System.out.println(i);
+        for (int i = 0 ; i < len ; i ++){
+            if (!visited[i] && remain >= dungeons[i][0]){
                 visited[i] = true;
-                backTrack(dungeons, visited, remain - dungeons[i][1], count + 1);
+                calc(remain - dungeons[i][1], count + 1, dungeons);
                 visited[i] = false;
             }
         }
-        
     }
 }
