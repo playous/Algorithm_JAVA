@@ -3,28 +3,29 @@ import java.util.*;
 class Solution {
     public int[] solution(int brown, int yellow) {
         int[] answer = new int[2];
-        ArrayList<int[]> ybox = new ArrayList<>();
         
-        for (int i = 1; i <= Math.sqrt(yellow); i++){
-            if(yellow % i == 0){
-                int[] y_size = new int[2];
-                y_size[0] = yellow/i;
-                y_size[1] = i;
-                ybox.add(y_size);
+        int sum = brown + yellow;
+        
+        int a1 = 0, a2 = 0, y = 0;
+        boolean flag = false;
+        
+        for (int x = 3 ; x <= sum / 3 ; x ++){
+            if (sum % x == 0){
+                y = sum / x;
+                if((x - 2) * (y - 2) == yellow){
+                    flag = true;
+                }
+            }
+            if (flag){
+                a1 = Math.max(x, y);
+                a2 = Math.min(x, y);
+                break;
             }
         }
-        int yx, yy;
         
-        for(int[] arr : ybox){
-            yx = arr[0];
-            yy = arr[1];
-            if((yx + yy) * 2 + 4 == brown){
-               answer[0] = yx + 2;
-               answer[1] = yy + 2;
-               break;
-            }
-                
-        }
+        answer[0] = a1;
+        answer[1] = a2;
+        
         return answer;
     }
 }
