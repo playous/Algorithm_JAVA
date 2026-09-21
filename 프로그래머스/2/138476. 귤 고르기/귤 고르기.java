@@ -4,26 +4,24 @@ import java.io.*;
 class Solution {
     public int solution(int k, int[] tangerine) {
         int answer = 0;
-        int n = tangerine.length;
-        int[] count = new int[n + 1];
-        
         HashMap<Integer,Integer> map = new HashMap<>();
-        for (int i = 0 ; i < n; i++){
-            int num = tangerine[i];
-            map.put(num, map.getOrDefault(num, 0) + 1);
+        
+        for (int i = 0; i < tangerine.length; i ++){
+            int cur = tangerine[i];
+            map.put(cur, map.getOrDefault(cur, 0) + 1);
         }
         
-        for (int num : map.values()){
-            count[num]++;
+        List<Integer> list = new ArrayList<>();
+        
+        for (int v : map.values()){
+            list.add(v);
         }
         
-        for (int i = n ; i >= 0 ; i--){
-            for (int j = 0 ; j < count[i]; j++){
-                k -= i;
-                answer++;
-                if (k <= 0) break;
-            }
-            if (k <= 0) break;
+        Collections.sort(list, (a, b) -> b - a);
+        
+        while (k > 0){
+            answer++;
+            k -= list.remove(0);
         }
         
         return answer;
