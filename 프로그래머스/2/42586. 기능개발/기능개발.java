@@ -4,39 +4,29 @@ class Solution {
     public int[] solution(int[] progresses, int[] speeds) {
         int n = progresses.length;
         
+        Queue<Integer> q = new ArrayDeque<>();
         List<Integer> list = new ArrayList<>();
         
-        int[] time = new int[n];
-
-        for (int i = 0; i < n ; i ++){
-            int need = 100 - progresses[i];
-            
-            time[i] = need/speeds[i];
-            
-            if (need % speeds[i] != 0) time[i]++;
-        }
-        
-        boolean[] visited = new boolean[n];
-        
         for (int i = 0 ; i < n ; i ++){
-            if (visited[i]) continue;
+            int remain = 100 - progresses[i];
             
-            int cur = time[i];
-            visited[i] = true;
-            int count = 1;
+            int time = remain / speeds[i];
             
-            for (int j = i + 1 ; j < n ; j ++){
-                if (time[j] <= cur){
-                    visited[j] = true;
-                    count++;
-                }
-                else break;
-            }
-            
-            list.add(count);
+            if (remain % speeds[i] != 0) time++;
+            q.add(time);
         }
         
-        int[] answer = new int[list.size()]; 
+        while (!q.isEmpty()){
+            int num = 1;
+            int cur = q.poll();
+            while (!q.isEmpty() && q.peek() <= cur){
+                q.poll();
+                num++;
+            }
+            list.add(num);
+        }
+        
+        int[] answer = new int[list.size()];
         
         for (int i = 0 ; i < answer.length; i ++){
             answer[i] = list.get(i);
